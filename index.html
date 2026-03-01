@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studio3D — 3D Design Tool</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- Title Bar -->
+    <header class="title-bar">
+      <div class="title-left">
+        <div class="logo"><i class="fa-solid fa-cube"></i></div>
+        <div class="title-info">
+          <input type="text" id="doc-title" value="Untitled Scene" spellcheck="false">
+          <div class="menu-bar">
+            <div class="menu-item">
+              <button class="menu-btn" data-menu="file">File</button>
+              <div class="menu-dropdown" id="menu-file">
+                <button data-action="new-scene"><i class="fa-solid fa-file"></i> New Scene <span class="shortcut">⌘N</span></button>
+                <div class="menu-sep"></div>
+                <div class="menu-submenu-item">
+                  <button class="has-submenu"><i class="fa-solid fa-file-import"></i> Import <i class="fa-solid fa-chevron-right submenu-arrow"></i></button>
+                  <div class="menu-submenu">
+                    <button data-action="import-scene"><i class="fa-solid fa-cube"></i> Studio3D Scene (.json)</button>
+                    <div class="menu-sep"></div>
+                    <button data-action="import-gltf"><i class="fa-solid fa-cube"></i> GLTF / GLB (.gltf, .glb)</button>
+                    <button data-action="import-obj"><i class="fa-solid fa-cube"></i> Wavefront OBJ (.obj)</button>
+                    <button data-action="import-stl"><i class="fa-solid fa-cube"></i> STL (.stl)</button>
+                    <button data-action="import-fbx"><i class="fa-solid fa-cube"></i> FBX (.fbx)</button>
+                    <button data-action="import-ply"><i class="fa-solid fa-cube"></i> PLY (.ply)</button>
+                  </div>
+                </div>
+                <div class="menu-submenu-item">
+                  <button class="has-submenu"><i class="fa-solid fa-file-export"></i> Export <i class="fa-solid fa-chevron-right submenu-arrow"></i></button>
+                  <div class="menu-submenu">
+                    <button data-action="export-scene"><i class="fa-solid fa-cube"></i> Studio3D Scene (.json)</button>
+                    <div class="menu-sep"></div>
+                    <button data-action="export-gltf"><i class="fa-solid fa-cube"></i> GLTF (.gltf)</button>
+                    <button data-action="export-glb"><i class="fa-solid fa-cube"></i> GLB Binary (.glb)</button>
+                    <button data-action="export-obj"><i class="fa-solid fa-cube"></i> Wavefront OBJ (.obj)</button>
+                    <button data-action="export-stl"><i class="fa-solid fa-cube"></i> STL (.stl)</button>
+                    <button data-action="export-stl-binary"><i class="fa-solid fa-cube"></i> STL Binary (.stl)</button>
+                    <button data-action="export-ply"><i class="fa-solid fa-cube"></i> PLY (.ply)</button>
+                  </div>
+                </div>
+                <div class="menu-sep"></div>
+                <button data-action="screenshot"><i class="fa-solid fa-camera"></i> Screenshot <span class="shortcut">⌘P</span></button>
+                <button data-action="record-video"><i class="fa-solid fa-circle-dot"></i> Start Recording <span class="shortcut">⌘R</span></button>
+                <button data-action="stop-recording" style="display:none;"><i class="fa-solid fa-square"></i> Stop Recording</button>
+                <button data-action="download-video" style="display:none;"><i class="fa-solid fa-download"></i> Download Last Recording</button>
+              </div>
+            </div>
+            <div class="menu-item">
+              <button class="menu-btn" data-menu="edit">Edit</button>
+              <div class="menu-dropdown" id="menu-edit">
+                <button data-action="undo"><i class="fa-solid fa-rotate-left"></i> Undo <span class="shortcut">⌘Z</span></button>
+                <button data-action="redo"><i class="fa-solid fa-rotate-right"></i> Redo <span class="shortcut">⇧⌘Z</span></button>
+                <div class="menu-sep"></div>
+                <button data-action="duplicate"><i class="fa-solid fa-clone"></i> Duplicate <span class="shortcut">⌘D</span></button>
+                <button data-action="delete"><i class="fa-solid fa-trash-can"></i> Delete <span class="shortcut">⌫</span></button>
+                <div class="menu-sep"></div>
+                <button data-action="select-all"><i class="fa-solid fa-object-group"></i> Select All <span class="shortcut">⌘A</span></button>
+                <button data-action="deselect"><i class="fa-solid fa-arrow-pointer"></i> Deselect <span class="shortcut">Esc</span></button>
+              </div>
+            </div>
+            <div class="menu-item">
+              <button class="menu-btn" data-menu="view">View</button>
+              <div class="menu-dropdown" id="menu-view">
+                <button data-action="view-front"><i class="fa-solid fa-square"></i> Front</button>
+                <button data-action="view-back"><i class="fa-solid fa-square"></i> Back</button>
+                <button data-action="view-left"><i class="fa-solid fa-square"></i> Left</button>
+                <button data-action="view-right"><i class="fa-solid fa-square"></i> Right</button>
+                <button data-action="view-top"><i class="fa-solid fa-square"></i> Top</button>
+                <button data-action="view-perspective"><i class="fa-solid fa-cube"></i> Perspective</button>
+                <div class="menu-sep"></div>
+                <button data-action="toggle-grid"><i class="fa-solid fa-border-all"></i> Toggle Grid <span class="shortcut">G</span></button>
+                <button data-action="toggle-wireframe"><i class="fa-solid fa-draw-polygon"></i> Toggle Wireframe</button>
+                <button data-action="focus"><i class="fa-solid fa-crosshairs"></i> Focus Selected <span class="shortcut">F</span></button>
+                <div class="menu-sep"></div>
+                <button data-action="toggle-view-mode"><i class="fa-solid fa-eye"></i> Toggle View Mode <span class="shortcut">V</span></button>
+              </div>
+            </div>
+            <div class="menu-item">
+              <button class="menu-btn" data-menu="add">Add</button>
+              <div class="menu-dropdown" id="menu-add">
+                <button data-action="add-box"><i class="fa-solid fa-cube"></i> Box</button>
+                <button data-action="add-sphere"><i class="fa-solid fa-circle"></i> Sphere</button>
+                <button data-action="add-cylinder"><i class="fa-solid fa-database"></i> Cylinder</button>
+                <button data-action="add-cone"><i class="fa-solid fa-caret-up"></i> Cone</button>
+                <button data-action="add-torus"><i class="fa-regular fa-circle"></i> Torus</button>
+                <button data-action="add-plane"><i class="fa-solid fa-square"></i> Plane</button>
+                <button data-action="add-icosahedron"><i class="fa-solid fa-gem"></i> Icosahedron</button>
+                <button data-action="add-torusknot"><i class="fa-solid fa-infinity"></i> Torus Knot</button>
+                <div class="menu-sep"></div>
+                <button data-action="add-point-light"><i class="fa-solid fa-lightbulb"></i> Point Light</button>
+                <button data-action="add-spot-light"><i class="fa-solid fa-bolt"></i> Spot Light</button>
+                <button data-action="add-dir-light"><i class="fa-solid fa-sun"></i> Directional Light</button>
+              </div>
+            </div>
+            <div class="menu-item">
+              <button class="menu-btn" data-menu="help">Help</button>
+              <div class="menu-dropdown" id="menu-help">
+                <button data-action="help-shortcuts"><i class="fa-solid fa-keyboard"></i> Keyboard Shortcuts</button>
+                <button data-action="help-about"><i class="fa-solid fa-circle-info"></i> About Studio3D</button>
+                <div class="menu-sep"></div>
+                <button data-action="reset-library"><i class="fa-solid fa-rotate"></i> Reset Library to Defaults</button>
+                <div class="menu-sep"></div>
+                <button data-action="self-test"><i class="fa-solid fa-flask-vial"></i> Run Self Test</button>
+                <div class="menu-sep"></div>
+                <div class="menu-submenu-item">
+                  <button class="has-submenu"><i class="fa-solid fa-atom"></i> Physics Demos <i class="fa-solid fa-chevron-right submenu-arrow"></i></button>
+                  <div class="menu-submenu">
+                    <button data-action="demo-dominoes"><i class="fa-solid fa-bars-staggered"></i> Domino Chain</button>
+                    <button data-action="demo-bowling"><i class="fa-solid fa-bowling-ball"></i> Bowling Alley</button>
+                    <button data-action="demo-tower"><i class="fa-solid fa-building"></i> Stacking Tower</button>
+                    <button data-action="demo-ramp"><i class="fa-solid fa-hill-rockslide"></i> Ramp &amp; Balls</button>
+                    <button data-action="demo-cradle"><i class="fa-solid fa-circle-nodes"></i> Newton's Cradle</button>
+                    <button data-action="demo-double-pendulum"><i class="fa-solid fa-link"></i> Double Pendulum</button>
+                    <button data-action="demo-projectile"><i class="fa-solid fa-rocket"></i> Projectile Trajectory</button>
+                    <button data-action="demo-robot-arm"><i class="fa-solid fa-robot"></i> Robot Arm Pickup</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="title-right">
+        <span class="save-status" id="save-status"></span>
+        <button class="title-btn mode-toggle" id="btn-view-mode" title="Toggle View Mode (V)">
+          <i class="fa-solid fa-eye"></i>
+          <span class="mode-label">View</span>
+        </button>
+        <button class="title-btn" id="btn-export" title="Export Scene"><i class="fa-solid fa-file-export"></i></button>
+        <button class="title-btn" id="btn-screenshot" title="Screenshot"><i class="fa-solid fa-camera"></i></button>
+      </div>
+    </header>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="toolbar-group">
+        <button class="tool-btn" id="btn-undo" title="Undo (Ctrl+Z)"><i class="fa-solid fa-rotate-left"></i></button>
+        <button class="tool-btn" id="btn-redo" title="Redo (Ctrl+Y)"><i class="fa-solid fa-rotate-right"></i></button>
+      </div>
+      <div class="toolbar-sep"></div>
+
+      <div class="toolbar-group" id="transform-group">
+        <button class="tool-btn active" data-mode="translate" title="Move (W)"><i class="fa-solid fa-arrows-up-down-left-right"></i></button>
+        <button class="tool-btn" data-mode="rotate" title="Rotate (E)"><i class="fa-solid fa-rotate"></i></button>
+        <button class="tool-btn" data-mode="scale" title="Scale (R)"><i class="fa-solid fa-expand"></i></button>
+      </div>
+      <div class="toolbar-sep"></div>
+
+      <div class="toolbar-group" id="space-group">
+        <button class="tool-btn active" data-space="world" title="World Space"><i class="fa-solid fa-globe"></i></button>
+        <button class="tool-btn" data-space="local" title="Local Space"><i class="fa-solid fa-vector-square"></i></button>
+      </div>
+      <div class="toolbar-sep"></div>
+
+      <div class="toolbar-group" id="snap-group">
+        <button class="tool-btn" id="btn-snap" title="Toggle Snap"><i class="fa-solid fa-magnet"></i></button>
+        <input type="number" id="snap-value" value="1" min="0.1" step="0.1" title="Snap increment">
+      </div>
+      <div class="toolbar-sep"></div>
+
+      <div class="toolbar-group">
+        <button class="tool-btn" id="btn-grid" title="Toggle Grid"><i class="fa-solid fa-border-all"></i></button>
+        <button class="tool-btn" id="btn-wireframe" title="Wireframe Mode"><i class="fa-solid fa-draw-polygon"></i></button>
+        <button class="tool-btn" id="btn-focus" title="Focus Selected (F)"><i class="fa-solid fa-crosshairs"></i></button>
+      </div>
+      <div class="toolbar-sep"></div>
+
+      <div class="toolbar-group">
+        <button class="tool-btn" id="btn-delete" title="Delete Selected (Del)"><i class="fa-solid fa-trash-can"></i></button>
+        <button class="tool-btn" id="btn-duplicate" title="Duplicate (Ctrl+D)"><i class="fa-solid fa-clone"></i></button>
+      </div>
+      <div class="toolbar-sep"></div>
+
+      <div class="toolbar-group">
+        <button class="tool-btn" id="btn-physics-play" title="Play Physics"><i class="fa-solid fa-play"></i></button>
+        <button class="tool-btn" id="btn-physics-pause" title="Pause Physics" style="display:none;"><i class="fa-solid fa-pause"></i></button>
+        <button class="tool-btn" id="btn-physics-reset" title="Reset Physics" style="display:none;"><i class="fa-solid fa-rotate-left"></i></button>
+      </div>
+    </div>
+
+    <!-- View Mode Banner -->
+    <div class="view-mode-banner" id="view-mode-banner">
+      <i class="fa-solid fa-eye"></i>
+      <span>View Mode — Click objects to inspect properties</span>
+      <button class="tool-btn" id="btn-exit-view-mode" style="margin-left:12px;font-size:11px;padding:2px 10px;" title="Exit View Mode (V)"><i class="fa-solid fa-pen"></i> Edit</button>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+
+      <!-- Left Panel — Scene Hierarchy & Primitives -->
+      <aside class="panel panel-left" id="panel-left">
+        <div class="panel-section">
+          <div class="panel-header">
+            <span>Add Objects</span>
+          </div>
+          <div class="primitives-grid">
+            <button class="prim-btn" data-shape="box" title="Box">
+              <i class="fa-solid fa-cube"></i><span>Box</span>
+            </button>
+            <button class="prim-btn" data-shape="sphere" title="Sphere">
+              <i class="fa-solid fa-circle"></i><span>Sphere</span>
+            </button>
+            <button class="prim-btn" data-shape="cylinder" title="Cylinder">
+              <i class="fa-solid fa-database"></i><span>Cylinder</span>
+            </button>
+            <button class="prim-btn" data-shape="cone" title="Cone">
+              <i class="fa-solid fa-caret-up"></i><span>Cone</span>
+            </button>
+            <button class="prim-btn" data-shape="torus" title="Torus">
+              <i class="fa-regular fa-circle"></i><span>Torus</span>
+            </button>
+            <button class="prim-btn" data-shape="plane" title="Plane">
+              <i class="fa-solid fa-square"></i><span>Plane</span>
+            </button>
+            <button class="prim-btn" data-shape="icosahedron" title="Icosahedron">
+              <i class="fa-solid fa-gem"></i><span>Icosa</span>
+            </button>
+            <button class="prim-btn" data-shape="torusknot" title="Torus Knot">
+              <i class="fa-solid fa-infinity"></i><span>Knot</span>
+            </button>
+            <button class="prim-btn" data-shape="dodecahedron" title="Dodecahedron">
+              <i class="fa-solid fa-gem"></i><span>Dodeca</span>
+            </button>
+            <button class="prim-btn" data-shape="octahedron" title="Octahedron">
+              <i class="fa-solid fa-gem"></i><span>Octa</span>
+            </button>
+            <button class="prim-btn" data-shape="tetrahedron" title="Tetrahedron">
+              <i class="fa-solid fa-gem"></i><span>Tetra</span>
+            </button>
+            <button class="prim-btn" data-shape="pyramid" title="Pyramid">
+              <i class="fa-solid fa-caret-up"></i><span>Pyramid</span>
+            </button>
+            <button class="prim-btn" data-shape="capsule" title="Capsule">
+              <i class="fa-solid fa-capsules"></i><span>Capsule</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="panel-section flex-grow">
+          <div class="panel-header">
+            <span>Scene Hierarchy</span>
+            <div class="panel-header-actions">
+              <button class="panel-btn" id="btn-hier-delete" title="Delete Selected"><i class="fa-solid fa-trash-can"></i></button>
+              <button class="panel-btn" id="btn-hier-rename" title="Rename Selected"><i class="fa-solid fa-pen"></i></button>
+            </div>
+          </div>
+          <div class="hierarchy-list" id="hierarchy-list">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-header"><span>Lighting</span></div>
+          <div class="light-controls">
+            <button class="prim-btn" data-light="point" title="Point Light">
+              <i class="fa-solid fa-lightbulb"></i><span>Point</span>
+            </button>
+            <button class="prim-btn" data-light="spot" title="Spot Light">
+              <i class="fa-solid fa-bolt"></i><span>Spot</span>
+            </button>
+            <button class="prim-btn" data-light="directional" title="Directional Light">
+              <i class="fa-solid fa-sun"></i><span>Direct</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-header"><span>Combine</span></div>
+          <div class="combine-controls">
+            <button class="prim-btn" id="btn-csg-union" title="Union: merge two objects">
+              <i class="fa-solid fa-circle-plus"></i><span>Union</span>
+            </button>
+            <button class="prim-btn" id="btn-csg-subtract" title="Subtract: cut B from A">
+              <i class="fa-solid fa-circle-minus"></i><span>Subtract</span>
+            </button>
+            <button class="prim-btn" id="btn-csg-intersect" title="Intersect: keep overlap">
+              <i class="fa-solid fa-circle-half-stroke"></i><span>Intersect</span>
+            </button>
+            <button class="prim-btn" id="btn-merge" title="Merge into single mesh">
+              <i class="fa-solid fa-object-group"></i><span>Merge</span>
+            </button>
+          </div>
+          <p class="combine-hint">Select object A, then Ctrl+click object B, then choose an operation.</p>
+        </div>
+
+        <div class="panel-section flex-grow">
+          <div class="panel-header">
+            <span>Symbol Library</span>
+            <div class="panel-header-actions">
+              <button class="panel-btn" id="btn-lib-save" title="Save Selected to Library"><i class="fa-solid fa-plus"></i></button>
+              <button class="panel-btn" id="btn-lib-import" title="Import Model to Library"><i class="fa-solid fa-file-import"></i></button>
+            </div>
+          </div>
+          <div class="library-grid" id="library-grid">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </aside>
+
+      <!-- Viewport -->
+      <div class="viewport-container">
+        <canvas id="viewport"></canvas>
+
+        <!-- Viewport Overlay UI -->
+        <div class="viewport-overlay top-left">
+          <div class="view-label" id="view-label">Perspective</div>
+        </div>
+        <div class="viewport-overlay top-right">
+          <div class="view-nav">
+            <button class="nav-btn" data-view="front" title="Front">F</button>
+            <button class="nav-btn" data-view="back" title="Back">B</button>
+            <button class="nav-btn" data-view="left" title="Left">L</button>
+            <button class="nav-btn" data-view="right" title="Right">R</button>
+            <button class="nav-btn" data-view="top" title="Top">T</button>
+            <button class="nav-btn" data-view="bottom" title="Bottom">Bo</button>
+            <button class="nav-btn" data-view="perspective" title="Perspective">P</button>
+          </div>
+        </div>
+        <div class="viewport-overlay bottom-left">
+          <div class="viewport-info" id="viewport-info">Objects: 0 | Vertices: 0 | Faces: 0</div>
+        </div>
+        <div class="viewport-overlay bottom-right">
+          <div class="zoom-controls">
+            <button class="nav-btn" id="btn-zoom-in" title="Zoom In"><i class="fa-solid fa-plus"></i></button>
+            <button class="nav-btn" id="btn-zoom-out" title="Zoom Out"><i class="fa-solid fa-minus"></i></button>
+            <button class="nav-btn" id="btn-zoom-fit" title="Fit All"><i class="fa-solid fa-expand"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel — Properties -->
+      <aside class="panel panel-right" id="panel-right">
+        <!-- View-Only Properties Panel (shown in View Mode) -->
+        <div id="view-mode-panel" style="display:none;">
+          <div class="panel-section">
+            <div class="panel-header"><span><i class="fa-solid fa-eye"></i> View Mode</span></div>
+            <div class="view-mode-hint">Click any object to inspect its properties</div>
+          </div>
+          <div id="view-props-content" style="display:none;">
+            <div class="panel-section">
+              <div class="panel-header"><span>Object Info</span></div>
+              <div id="view-obj-info" class="view-props-grid"></div>
+            </div>
+            <div class="panel-section">
+              <div class="panel-header"><span>Transform</span></div>
+              <div id="view-transform" class="view-props-grid"></div>
+            </div>
+            <div class="panel-section">
+              <div class="panel-header"><span>Material</span></div>
+              <div id="view-material" class="view-props-grid"></div>
+            </div>
+            <div class="panel-section" id="view-geometry-section">
+              <div class="panel-header"><span>Geometry</span></div>
+              <div id="view-geometry" class="view-props-grid"></div>
+            </div>
+            <div class="panel-section" id="view-light-section" style="display:none;">
+              <div class="panel-header"><span>Light</span></div>
+              <div id="view-light" class="view-props-grid"></div>
+            </div>
+            <div class="panel-section" id="view-custom-section" style="display:none;">
+              <div class="panel-header"><span>Custom Properties</span></div>
+              <div id="view-custom" class="view-props-grid"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Edit Mode Panels -->
+        <div id="edit-mode-panels">
+        <div class="panel-section" id="props-placeholder">
+          <div class="empty-state">
+            <i class="fa-solid fa-cube"></i>
+            <p>Select an object to view properties</p>
+          </div>
+        </div>
+
+        <div class="panel-section" id="props-transform" style="display:none;">
+          <div class="panel-header"><span>Transform</span></div>
+          <div class="prop-group">
+            <label>Position</label>
+            <div class="vec3-input">
+              <div class="vec-field"><span class="vec-label x">X</span><input type="number" id="pos-x" step="0.1"></div>
+              <div class="vec-field"><span class="vec-label y">Y</span><input type="number" id="pos-y" step="0.1"></div>
+              <div class="vec-field"><span class="vec-label z">Z</span><input type="number" id="pos-z" step="0.1"></div>
+            </div>
+          </div>
+          <div class="prop-group">
+            <label>Rotation</label>
+            <div class="vec3-input">
+              <div class="vec-field"><span class="vec-label x">X</span><input type="number" id="rot-x" step="1"></div>
+              <div class="vec-field"><span class="vec-label y">Y</span><input type="number" id="rot-y" step="1"></div>
+              <div class="vec-field"><span class="vec-label z">Z</span><input type="number" id="rot-z" step="1"></div>
+            </div>
+          </div>
+          <div class="prop-group">
+            <label>Scale</label>
+            <div class="vec3-input">
+              <div class="vec-field"><span class="vec-label x">X</span><input type="number" id="scl-x" step="0.1"></div>
+              <div class="vec-field"><span class="vec-label y">Y</span><input type="number" id="scl-y" step="0.1"></div>
+              <div class="vec-field"><span class="vec-label z">Z</span><input type="number" id="scl-z" step="0.1"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-section" id="props-material" style="display:none;">
+          <div class="panel-header"><span>Material</span></div>
+          <div class="prop-group">
+            <label>Color</label>
+            <div class="color-row">
+              <input type="color" id="mat-color" value="#5b8def">
+              <input type="text" id="mat-color-hex" value="#5b8def" maxlength="7">
+            </div>
+          </div>
+          <div class="prop-group">
+            <label>Metalness</label>
+            <input type="range" id="mat-metalness" min="0" max="1" step="0.01" value="0.1">
+          </div>
+          <div class="prop-group">
+            <label>Roughness</label>
+            <input type="range" id="mat-roughness" min="0" max="1" step="0.01" value="0.5">
+          </div>
+          <div class="prop-group">
+            <label>Opacity</label>
+            <input type="range" id="mat-opacity" min="0" max="1" step="0.01" value="1">
+          </div>
+          <div class="prop-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="mat-transparent"> Transparent
+            </label>
+          </div>
+          <div class="prop-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="mat-wireframe"> Wireframe
+            </label>
+          </div>
+        </div>
+
+        <div class="panel-section" id="props-geometry" style="display:none;">
+          <div class="panel-header"><span>Geometry</span></div>
+          <div id="geometry-params">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <div class="panel-section" id="props-light" style="display:none;">
+          <div class="panel-header"><span>Light Properties</span></div>
+          <div class="prop-group">
+            <label>Color</label>
+            <div class="color-row">
+              <input type="color" id="light-color" value="#ffffff">
+              <input type="text" id="light-color-hex" value="#ffffff" maxlength="7">
+            </div>
+          </div>
+          <div class="prop-group">
+            <label>Intensity</label>
+            <input type="range" id="light-intensity" min="0" max="10" step="0.1" value="1">
+          </div>
+          <div class="prop-group">
+            <label>Distance</label>
+            <input type="number" id="light-distance" min="0" step="1" value="0">
+          </div>
+        </div>
+
+        <div class="panel-section" id="props-data" style="display:none;">
+          <div class="panel-header">
+            <span>Custom Properties</span>
+            <button class="panel-btn" id="btn-add-prop" title="Add Property"><i class="fa-solid fa-plus"></i></button>
+          </div>
+          <div id="custom-props-list">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+
+        <div class="panel-section" id="props-physics" style="display:none;">
+          <div class="panel-header"><span>Physics</span></div>
+          <div class="prop-group">
+            <label>Enable Physics</label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="phys-enabled"> Simulate this object
+            </label>
+          </div>
+          <div class="prop-group">
+            <label>Body Type</label>
+            <select id="phys-body-type">
+              <option value="dynamic">Dynamic</option>
+              <option value="static">Static</option>
+              <option value="kinematic">Kinematic</option>
+            </select>
+          </div>
+          <div class="prop-group">
+            <label>Mass (kg)</label>
+            <input type="number" id="phys-mass" min="0" step="0.1" value="1">
+          </div>
+          <div class="prop-group">
+            <label>Friction</label>
+            <input type="range" id="phys-friction" min="0" max="2" step="0.05" value="0.5">
+          </div>
+          <div class="prop-group">
+            <label>Restitution (Bounce)</label>
+            <input type="range" id="phys-restitution" min="0" max="1" step="0.05" value="0.3">
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-header"><span>Environment</span></div>
+          <div class="prop-group">
+            <label>Background</label>
+            <div class="color-row">
+              <input type="color" id="bg-color" value="#2a2a3e">
+              <input type="text" id="bg-color-hex" value="#2a2a3e" maxlength="7">
+            </div>
+          </div>
+          <div class="prop-group">
+            <label>Ambient Light</label>
+            <input type="range" id="ambient-intensity" min="0" max="3" step="0.05" value="0.4">
+          </div>
+          <div class="prop-group">
+            <label>Fog</label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="fog-enabled"> Enable Fog
+            </label>
+          </div>
+        </div>
+        </div><!-- end edit-mode-panels -->
+      </aside>
+    </div>
+
+    <!-- Status Bar -->
+    <footer class="status-bar">
+      <div class="status-left">
+        <span id="status-msg">Ready</span>
+      </div>
+      <div class="status-right">
+        <span id="fps-counter">0 FPS</span>
+        <span class="status-sep">|</span>
+        <span id="renderer-info">WebGL</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Context Menu -->
+  <div class="context-menu" id="context-menu" style="display:none;">
+    <button data-action="duplicate"><i class="fa-solid fa-clone"></i> Duplicate</button>
+    <button data-action="delete"><i class="fa-solid fa-trash-can"></i> Delete</button>
+    <div class="ctx-sep"></div>
+    <button data-action="group"><i class="fa-solid fa-object-group"></i> Group</button>
+    <button data-action="ungroup"><i class="fa-solid fa-object-ungroup"></i> Ungroup</button>
+    <div class="ctx-sep"></div>
+    <button data-action="focus"><i class="fa-solid fa-crosshairs"></i> Focus</button>
+    <button data-action="hide"><i class="fa-solid fa-eye-slash"></i> Hide</button>
+    <button data-action="reset-transform"><i class="fa-solid fa-undo"></i> Reset Transform</button>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loading-overlay" style="display:none;">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loading-text">Loading...</div>
+  </div>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/",
+      "cannon-es": "https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js"
+    }
+  }
+  </script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
