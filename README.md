@@ -12,6 +12,8 @@ A powerful, intuitive 3D design and physics simulation engine built with Three.j
 
 **Author:** [Rodrigo Vigna](mailto:rvigna@outlook.com) [![GitHub](https://img.shields.io/badge/GitHub-rvigna-black?style=flat-square&logo=github)](https://github.com/rvigna)
 
+📘 **[Read the full User Handbook →](HANDBOOK.md)**
+
 ---
 
 ## 📑 Table of Contents
